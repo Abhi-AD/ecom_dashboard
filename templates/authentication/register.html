@@ -1,4 +1,5 @@
 {% extends 'base_auth.html' %}
+{% load static %}
 {% block main %}
   <div class="col-md-4"></div>
   <div class="col-md-4">
@@ -11,9 +12,12 @@
           <div class="form-group">
             <input type="text" name="username" placeholder="Enter your name... " id="usernameField" class="form-control form-control-sm" />
           </div>
+          <div class="invalid_feedback invalid-feedback" style="display: none;"></div>
+          <p class="text-sm text-success usernameSuccessOutput"></p>
           <div class="form-group">
             <input type="email" name="email" placeholder="Enter your email... " id="emailField" class="form-control form-control-sm" />
           </div>
+          <div class="emailfeedBackArea" style="display: none;"></div>
           <div class="form-group">
             <input type="password" name="password" placeholder="Enter your password... " id="passwordField" class="form-control form-control-sm" />
             <small class="float-end py-3">Show</small>
@@ -24,4 +28,6 @@
     </div>
   </div>
   <div class="col-md-4"></div>
+  <script src="{% static 'js/register/register-username.js' %}"></script>
+  <script src="{% static 'js/register/register-email.js' %}"></script>
 {% endblock %}
