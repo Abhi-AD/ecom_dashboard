@@ -1,9 +1,40 @@
+<style>
+    .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .close-btn:hover {
+        color: red;
+    }
+</style>
 {% if messages %}
 <div class="messages">
     {% for message in messages %}
-    <div{% if message.tags %} class="alert alert-sm alert-{{ message.tags }}"{% endif %}>
+    <div{% if message.tags %} class="alert alert-sm alert-{{ message.tags }} " {% endif %}>
+        <span class="close-btn" data-close>&times;</span>
         {{ message }}
     </div>
     {% endfor %}
 </div>
 {% endif %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const messages = document.querySelectorAll('.messages .alert');
+        messages.forEach(message => {
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 3000);
+            const closeButton = message.querySelector('[data-close]');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    message.style.display = 'none';
+                });
+            }
+        });
+    });
+</script>
