@@ -1,10 +1,17 @@
-from django.shortcuts import render
+import json
+from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
 from django.contrib.auth.models import User
-import json
+from django.urls import reverse
 from validate_email import validate_email
-from django.contrib import messages
+from django.contrib import messages, auth
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
+from apps.authentication.utils import token_generator
 
 
 # Create your views here.
@@ -65,8 +72,38 @@ class RegistrationView(View):
                     return render(request, "authentication/register.html", context)
                 user = User.objects.create_user(username=username, email=email)
                 user.set_password(password)
+                user.is_active = False
                 user.save()
+                uidb64 = urlsafe_base64_encode(force_bytes(str(user.pk)))
+                domain = get_current_site(request).domain
+                link = reverse(
+                    "activate",
+                    kwargs={
+                        "uidb64": uidb64,
+                        "token": token_generator.make_token(user),
+                    },
+                )
+                activate_link = "http://" + domain + link
+                email_subject = "Activate your account"
+                email_body = (
+                    f"Hi {user.username},\n\n"
+                    f"Please use this link to verify your account:\n{activate_link}\n\n"
+                    "Thank you for registering with us!"
+                )
+                email = EmailMessage(
+                    email_subject,
+                    email_body,
+                    settings.EMAIL_HOST_USER,
+                    [email],
+                )
+                email.content_subtype = "html"
+                email.send(fail_silently=False)
                 messages.success(request, "Account successfully created")
                 return render(request, "authentication/register.html")
 
         return render(request, "authentication/register.html")
+
+
+class VerificationView(View):
+    def get(self, request, uidb64, token):
+        return redirect("login")
