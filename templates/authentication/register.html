@@ -12,19 +12,19 @@
           {% csrf_token %}
           {% include 'components/message.html' %}
           <div class="form-group">
-            <input type="text" name="username" placeholder="Enter your name... " id="usernameField" class="form-control form-control-sm" />
+            <input type="text" name="username" value="{{ fieldValues.email }}" placeholder="Enter your name... " id="usernameField" class="form-control form-control-sm" />
           </div>
           <div class="invalid_feedback invalid-feedback" style="display: none;"></div>
           <p class="text-sm text-success usernameSuccessOutput"></p>
           <div class="form-group">
-            <input type="email" name="email" placeholder="Enter your email... " id="emailField" class="form-control form-control-sm" />
+            <input type="email" name="email" value="{{ fieldValues.email }}" placeholder="Enter your email... " id="emailField" class="form-control form-control-sm" />
           </div>
           <div class="emailfeedBackArea" style="display: none;"></div>
           <div class="form-group">
-            <input type="password" name="password" placeholder="Enter your password... " id="passwordField" class="form-control form-control-sm" />
+            <input type="password" name="password" value="{{ fieldValues.password }}" placeholder="Enter your password... " id="passwordField" class="form-control form-control-sm" />
             <small class="float-end py-3 showPasswordToggle">Show</small>
           </div>
-          <input type="submit" value="Register" class="btn btn-block btn-primary" />
+          <input type="submit" value="Register" class="btn btn-block btn-primary submit-btn" />
         </form>
       </div>
     </div>
