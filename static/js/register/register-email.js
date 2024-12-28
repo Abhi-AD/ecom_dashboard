@@ -12,12 +12,14 @@ emailField.addEventListener("keyup", (e) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Data", data);
         if (data.email_error) {
+          submitButton.disabled = true;
           emailField.classList.add("is-invalid");
           emailfeedBackArea.style.display = "block";
           emailfeedBackArea.style.color = "red";
           emailfeedBackArea.innerHTML = `<p>${data.email_error}</p>`;
+        } else {
+          submitButton.removeAttribute("disabled");
         }
       });
   }
