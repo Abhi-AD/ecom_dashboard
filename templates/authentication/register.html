@@ -8,7 +8,9 @@
         <div class="card-title py-3">
           <h4>Register for a free account</h4>
         </div>
-        <form action="" method="post" class="d-flex flex-column gap-2">
+        <form action="{% url 'registration' %}" method="post" class="d-flex flex-column gap-2">
+          {% csrf_token %}
+          {% include 'components/message.html' %}
           <div class="form-group">
             <input type="text" name="username" placeholder="Enter your name... " id="usernameField" class="form-control form-control-sm" />
           </div>
