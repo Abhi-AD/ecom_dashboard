@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # custom apps
     "apps.expenses",
     "apps.authentication",
+    "apps.userpreferences",
 ]
 
 MIDDLEWARE = [
