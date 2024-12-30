@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block main %}
+  <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      <h1 class="h2">Preferred Curency</h1>
+    </div>
+    <form action="{% url 'preferences' %}" method="post">
+      {% csrf_token %}
+      <div class="input-group">
+        <select name="currency" class="form-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+          {% if user_preference.currency %}
+            <option name="currency" selected>{{ user_preference.currency }}</option>
+          {% endif %}
+
+          {% for currency in currencies %}
+            <option name="currency" value="{{ currency.name }}-{{ currency.value }}">{{ currency.name }}-{{ currency.value }}</option>
+          {% endfor %}
+        </select>
+        <input class="btn btn-outline-secondary" type="submit" value="Save" />
+      </div>
+    </form>
+  </main>
+{% endblock %}
