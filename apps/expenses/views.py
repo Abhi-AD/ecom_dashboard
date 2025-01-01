@@ -4,9 +4,32 @@ from apps.expenses.models import Expense, Category
 from django.contrib import messages
 from datetime import datetime
 from django.core.paginator import Paginator
+import json
+from django.http import JsonResponse
+from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
 
 
+@csrf_exempt
 # Create your views here.
+def search_expenses(request):
+    if request.method == "POST":
+        try:
+            search_str = json.loads(request.body).get("searchText")
+            query = (
+                Q(amount__startswith=search_str)
+                | Q(date__startswith=search_str)
+                | Q(category__startswith=search_str)
+                | Q(description__icontains=search_str)
+            )
+            expenses = Expense.objects.filter(query, owner=request.user)
+            data = list(expenses.values())
+            return JsonResponse(data, safe=False)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
 @login_required(login_url="/auth/login")
 def index(request):
     categories = Category.objects.all()
