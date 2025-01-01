@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from apps.expenses.models import Expense, Category
+from apps.userpreferences.models import UserPreference
 from django.contrib import messages
 from datetime import datetime
 from django.core.paginator import Paginator
@@ -37,7 +38,13 @@ def index(request):
     paginator = Paginator(expenses, 10)
     page_number = request.GET.get("page")
     page_obj = Paginator.get_page(paginator, page_number)
-    context = {"expenses": expenses, "categories": categories, "page_obj": page_obj}
+    currency = UserPreference.objects.get(user=request.user).currency
+    context = {
+        "expenses": expenses,
+        "categories": categories,
+        "page_obj": page_obj,
+        "currency": currency,
+    }
     return render(request, "expense/index.html", context)
 
 
@@ -71,12 +78,10 @@ def add_expense(request):
 def expense_edit(request, id):
     expense = Expense.objects.get(pk=id)
     categories = Category.objects.all()
-    date_value = datetime(2024, 12, 30).strftime("%Y-%m-%d")
     context = {
         "expense": expense,
         "values": expense,
         "categories": categories,
-        "date_value": date_value,
     }
     if request.method == "GET":
         return render(request, "expense/edit-expenses.html", context)
