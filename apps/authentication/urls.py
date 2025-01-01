@@ -6,6 +6,8 @@ from apps.authentication.views import (
     VerificationView,
     LoginView,
     LogoutView,
+    RequestPasswordResetEmail,
+    CompletePasswordReset,
 )
 from django.views.decorators.csrf import csrf_exempt
 
@@ -24,4 +26,14 @@ urlpatterns = [
         name="validate-email",
     ),
     path("activate/<uidb64>/<token>/", VerificationView.as_view(), name="activate"),
+    path(
+        "request-rest-link/",
+        RequestPasswordResetEmail.as_view(),
+        name="request-password",
+    ),
+    path(
+        "set-new-password/<uidb64>/<token>/",
+        CompletePasswordReset.as_view(),
+        name="reset-user-password",
+    ),
 ]
