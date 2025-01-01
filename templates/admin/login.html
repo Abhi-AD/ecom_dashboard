@@ -1,0 +1,8 @@
+{% extends 'admin/login.html' %}
+{% load static %}
+{% block branding %}
+  <h1 id="site-name">Backend Login</h1>
+  {% block extra_style %}
+    <link href="{% static 'css/admin/style.css' %}" rel="stylesheet" />
+  {% endblock %}
+{% endblock %}
