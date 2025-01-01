@@ -1,0 +1,12 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block branding %}
+  <h1 id="site-name">
+    <img src="{% static 'img/icon.png' %}" alt="ICON" width="35" height="35" />
+    Dashboard
+  </h1>
+  {% block extra_style %}
+    <link href="{% static 'css/admin/style.css' %}" rel="stylesheet" />
+  {% endblock %}
+{% endblock %}
