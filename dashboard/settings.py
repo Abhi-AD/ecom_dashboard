@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "apps.expenses",
     "apps.authentication",
     "apps.userpreferences",
+    "apps.userincome",
 ]
 
 MIDDLEWARE = [
