@@ -1,4 +1,4 @@
-import json
+import json, threading
 from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
@@ -16,6 +16,15 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 
 # Create your views here.
+class EmailThread(threading.Thread):
+    def __init__(self, email):
+        self.email = email
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.email.send(fail_silently=False)
+
+
 class EmailValidationView(View):
     def post(self, request):
         data = json.loads(request.body)
@@ -98,7 +107,7 @@ class RegistrationView(View):
                     [email],
                 )
                 email.content_subtype = "html"
-                email.send(fail_silently=False)
+                EmailThread(email).start()
                 messages.success(request, "Account successfully created")
                 return render(request, "authentication/register.html")
 
@@ -202,7 +211,7 @@ class RequestPasswordResetEmail(View):
             [email],
         )
         email_message.content_subtype = "html"  # Ensure it sends as HTML email
-        email_message.send(fail_silently=False)
+        EmailThread(email).start()
 
         messages.success(request, "We have sent you an email to reset your password")
         return render(request, "authentication/reset-password.html")
@@ -231,7 +240,7 @@ class CompletePasswordReset(View):
                 return redirect("request-password")
             user.password = password
             user.set_password(password)
-            user.save()         
+            user.save()
             messages.success(request, "Password reset successful, you can login again")
             return redirect("login")
 
