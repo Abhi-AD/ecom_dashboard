@@ -29,7 +29,7 @@
           </div>
           <div class="mb-3">
             <label for="expense_date" class="form-label">Date of Expenses</label>
-            <input type="date" class="form-control form-control-sm" name="expense_date" value="{{ date_value }}" />
+            <input type="date" class="form-control form-control-sm" name="expense_date" value="{{ values.date|date:'Y-m-d' }}" />
           </div>
           <input type="submit" value="Update" class="btn btn-primary btn-md" />
           <a href="{% url 'expense_delete' expense.id %}" class="btn btn-danger btn-md">Delete</a>
