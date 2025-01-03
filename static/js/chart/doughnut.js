@@ -8,9 +8,15 @@ const generateColors = (numColors) => {
   }
   return colors;
 };
+
 const renderChart = (data, labels) => {
   const ctx = document.getElementById("data").getContext("2d");
   const backgroundColors = generateColors(labels.length);
+
+  // Calculate total and percentage for each data value
+  const total = data.reduce((acc, value) => acc + value, 0);
+  const percentages = data.map((value) => ((value / total) * 100).toFixed(2));
+
   new Chart(ctx, {
     type: "doughnut",
     data: {
@@ -20,6 +26,8 @@ const renderChart = (data, labels) => {
           label: "Last 6 months expense",
           data: data,
           backgroundColor: backgroundColors,
+          borderColor: backgroundColors,
+          borderWidth: 2,
         },
       ],
     },
@@ -29,7 +37,10 @@ const renderChart = (data, labels) => {
       plugins: {
         title: {
           display: true,
-          text: "Expenses by category",
+          text: "Expenses by category: " + total,
+          font: {
+            size: 30,
+          },
         },
         legend: {
           labels: {
@@ -38,10 +49,33 @@ const renderChart = (data, labels) => {
             },
           },
         },
+        tooltip: {
+          callbacks: {
+            label: function (tooltipItem) {
+              const percentage = percentages[tooltipItem.dataIndex];
+              const value = tooltipItem.raw;
+              return `${tooltipItem.label}: ${value} (${percentage}%)`;
+            },
+          },
+        },
+        datalabels: {
+          display: true,
+          color: "white",
+          font: {
+            weight: "bold",
+            size: 16,
+          },
+          formatter: function (value, context) {
+            const percentage = percentages[context.dataIndex];
+            const totalValue = value;
+            return `${totalValue} (${percentage}%)`;
+          },
+        },
       },
     },
   });
 };
+
 const getChartData = () => {
   fetch("/expense-category-summary/")
     .then((response) => response.json())
@@ -55,4 +89,5 @@ const getChartData = () => {
     })
     .catch((error) => console.error("Error:", error));
 };
+
 document.onload = getChartData();
