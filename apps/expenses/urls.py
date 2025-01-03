@@ -7,6 +7,7 @@ from apps.expenses.views import (
     search_expenses,
     expense_category_summary,
     stats_view,
+    export_csv,
 )
 
 urlpatterns = [
@@ -16,6 +17,7 @@ urlpatterns = [
     path("expense-delete/<int:id>/", expense_delete, name="expense_delete"),
     path("search-expense/", search_expenses, name="search_expenses"),
     path("stats/", stats_view, name="stats"),
+    path("export-csv/", export_csv, name="export_csv"),
     path(
         "expense-category-summary/",
         expense_category_summary,
