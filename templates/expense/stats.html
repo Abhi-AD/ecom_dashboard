@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+  <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    {% include 'components/message.html' %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      {% url 'stats' as add_expense_url %}
+      {% include 'components/breadcrumb.html' with home_url=add_expense_url title='Expense Summary' active='Summary' %}
+      <div class="btn-group me-2">
+        <a href="" class="btn btn-primary">Back</a>
+      </div>
+    </div>
+    <div style="">
+      <canvas id="data" width="500" height="500"></canvas>
+    </div>
+  </main>
+{% endblock %}

@@ -5,7 +5,7 @@ from apps.userpreferences.models import UserPreference
 from django.contrib import messages
 from datetime import datetime
 from django.core.paginator import Paginator
-import json
+import json, datetime
 from django.http import JsonResponse
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
@@ -115,3 +115,34 @@ def expense_delete(request, id):
     expense.delete()
     messages.success(request, "Expense deleted successfully")
     return redirect("index")
+
+
+def expense_category_summary(request):
+    todays_date = datetime.date.today()
+    six_months_ago = todays_date - datetime.timedelta(days=30 * 6)
+    expenses = Expense.objects.filter(
+        owner=request.user, date__gte=six_months_ago, date__lte=todays_date
+    )
+    finalrep = {}
+
+    def get_category(expense):
+        return expense.category
+
+    category_list = list(set(map(get_category, expenses)))
+
+    def get_expense_category_amount(category):
+        amount = 0
+        filter_by_category = expenses.filter(category=category)
+        for item in filter_by_category:
+            amount += item.amount
+        return amount
+
+    for expense in expenses:
+        print("Amount", expense)
+        for category in category_list:
+            finalrep[category] = get_expense_category_amount(category)
+    return JsonResponse({"expense_category_date": finalrep}, safe=False)
+
+
+def stats_view(request):
+    return render(request, "expense/stats.html")

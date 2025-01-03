@@ -5,6 +5,8 @@ from apps.expenses.views import (
     expense_edit,
     expense_delete,
     search_expenses,
+    expense_category_summary,
+    stats_view,
 )
 
 urlpatterns = [
@@ -13,4 +15,10 @@ urlpatterns = [
     path("expense-edit/<int:id>/", expense_edit, name="expense_edit"),
     path("expense-delete/<int:id>/", expense_delete, name="expense_delete"),
     path("search-expense/", search_expenses, name="search_expenses"),
+    path("stats/", stats_view, name="stats"),
+    path(
+        "expense-category-summary/",
+        expense_category_summary,
+        name="expense_category_summary",
+    ),
 ]
