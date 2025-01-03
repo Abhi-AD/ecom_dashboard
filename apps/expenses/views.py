@@ -5,8 +5,8 @@ from apps.userpreferences.models import UserPreference
 from django.contrib import messages
 from datetime import datetime
 from django.core.paginator import Paginator
-import json, datetime
-from django.http import JsonResponse
+import json, datetime, csv
+from django.http import JsonResponse, HttpResponse
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 
@@ -146,3 +146,23 @@ def expense_category_summary(request):
 
 def stats_view(request):
     return render(request, "expense/stats.html")
+
+
+def export_csv(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = (
+        "attachment; filename=export" + str(datetime.datetime.now()) + ".csv"
+    )
+    writer = csv.writer(response)
+    writer.writerow(
+        [
+            "Amount",
+            "Description",
+            "Category",
+            "Date",
+        ]
+    )
+    expense = Expense.objects.filter(owner=request.user)
+    for exp in expense:
+        writer.writerow([exp.amount, exp.description, exp.category, exp.date])
+    return response
