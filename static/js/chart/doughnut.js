@@ -1,6 +1,3 @@
-// Ensure you have installed chartjs-plugin-datalabels
-// npm install chartjs-plugin-datalabels
-
 const generateColors = (numColors) => {
   const colors = [];
   for (let i = 0; i < numColors; i++) {
@@ -94,4 +91,3 @@ const getChartData = () => {
 };
 
 document.onload = getChartData();
-a;
