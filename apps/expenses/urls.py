@@ -8,6 +8,7 @@ from apps.expenses.views import (
     expense_category_summary,
     stats_view,
     export_csv,
+    export_excel,
 )
 
 urlpatterns = [
@@ -18,6 +19,7 @@ urlpatterns = [
     path("search-expense/", search_expenses, name="search_expenses"),
     path("stats/", stats_view, name="stats"),
     path("export-csv/", export_csv, name="export_csv"),
+    path("export-excel/", export_excel, name="export_excel"),
     path(
         "expense-category-summary/",
         expense_category_summary,

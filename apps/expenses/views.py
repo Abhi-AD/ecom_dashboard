@@ -5,7 +5,7 @@ from apps.userpreferences.models import UserPreference
 from django.contrib import messages
 from datetime import datetime
 from django.core.paginator import Paginator
-import json, datetime, csv
+import json, datetime, csv, xlwt
 from django.http import JsonResponse, HttpResponse
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
@@ -165,4 +165,29 @@ def export_csv(request):
     expense = Expense.objects.filter(owner=request.user)
     for exp in expense:
         writer.writerow([exp.amount, exp.description, exp.category, exp.date])
+    return response
+
+
+def export_excel(request):
+    response = HttpResponse(content_type="application/ms-excel")
+    response["Content-Disposition"] = (
+        "attachment; filename=export" + str(datetime.datetime.now()) + ".xls"
+    )
+    wb = xlwt.Workbook(encoding="utf-8")
+    ws = wb.add_sheet("Expense")
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = ["Amount", "Description", "Category", "Date"]
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+    font_style = xlwt.XFStyle()
+    row = Expense.objects.filter(owner=request.user).values_list(
+        "amount", "description", "category", "date"
+    )
+    for row_data in row:
+        row_num += 1
+        for col_num in range(len(row_data)):
+            ws.write(row_num, col_num, str(row_data[col_num]), font_style)
+    wb.save(response)
     return response
