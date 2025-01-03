@@ -5,10 +5,14 @@ from apps.userpreferences.models import UserPreference
 from django.contrib import messages
 from datetime import datetime
 from django.core.paginator import Paginator
-import json, datetime, csv, xlwt
+import json, datetime, csv, xlwt, tempfile
 from django.http import JsonResponse, HttpResponse
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.views.decorators.csrf import csrf_exempt
+
+# pdf
+from django.template.loader import render_to_string
+from weasyprint import HTML
 
 
 @csrf_exempt
@@ -190,4 +194,26 @@ def export_excel(request):
         for col_num in range(len(row_data)):
             ws.write(row_num, col_num, str(row_data[col_num]), font_style)
     wb.save(response)
+    return response
+
+
+def export_pdf(request):
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = (
+        "inline;attachment; filename=export" + str(datetime.datetime.now()) + ".pdf"
+    )
+    response["Content-Transfer-Encoding"] = "binary"
+    expenses = Expense.objects.filter(owner=request.user)
+    sum = expenses.aggregate(Sum("amount"))
+
+    html_string = render_to_string(
+        "expense/pdf-output.html", {"expenses": expenses, "total": sum}
+    )
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, "rb")
+        response.write(output.read())
     return response
